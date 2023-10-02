@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Sign Up Now! - Scrumptious Recipes
+{% endblock title %}
+
+{% block content %}
+    <h1>Sign Up!</h1>
+    <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button>Sign Up</button>
+    </form>
+{% endblock content %}
+
+{% block comment %}
+steve, 1234steve
+{% endblock comment %}

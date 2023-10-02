@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <!-- <title>{{ recipe_object.title }}</title> -->
+  <title>Create a Recipe</title>
+{% endblock title %}
+
+{% block content %}
+<div class="create-form">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p}}
+      <button>Submit</button>
+    </form>
+</div>
+{% endblock content %}

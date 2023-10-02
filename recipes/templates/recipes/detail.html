@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>{{ recipe_object.title }}</title>
+{% endblock title %}
+
+{% block content %}
+<section class="detail-page-body" style="margin-left: 30rem;">
+    <h1 id="detail-recipe-title">{{ recipe_object.title }}</h1>
+    <img class="detail-img" src="{{ recipe_object.picture | default:'https://i.etsystatic.com/39994375/r/il/2df768/4612495587/il_1588xN.4612495587_nzob.jpg'}}">
+    <p>{{ recipe_object.description }}</p>
+    <div>{{ recipe_object.rating }} stars</div>
+    <h2 class="detail">Ingredients</h2>
+    <table class="ingredients-table">
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Food item</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ingredient in recipe_object.ingredients.all %}
+        <tr>
+          <td>{{ ingredient.amount }}</td>
+          <td>{{ ingredient.food_item }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h2 class="detail">Steps</h2>
+      <div class="instructions">
+          {% for step in recipe_object.steps.all %}
+          <li>{{ step.instruction }}</li>
+          {% endfor %}
+      </div>
+    <br>
+    <div>
+    <p>Created on: {{ recipe_object.created_on|date:'D, M d, Y' }}</p>
+    </div>
+    <div>
+      <a href="{% url 'edit_recipe' recipe_object.id %}">
+        <button class="button-10" role="button">Update Recipe</button>
+      </a>
+    </div>
+    <br>
+    <div>
+      <a href="{% url 'delete_recipe' recipe_object.id %}">
+        <button class="button-11" role="button">Delete</button>
+      </a>
+    </div>
+  </section>
+{% endblock content %}

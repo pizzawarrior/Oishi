@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  <!-- <title>{{ recipe_object.title }}</title> -->
+  <title>Scrumptious</title>
+{% endblock title %}
+
+{% block content %}
+
+    <div class="list-page-title">
+    <h1>Scrumptious Recipes</h1>
+    <h2>Daaaangg that's gooood!</h2>
+    </div>
+    <br>
+    <br>
+    <div class="list-grid">
+        {% for recipe in recipe_list %}
+        <div>
+            <div class="list-recipe-name">
+            <h3>
+                <a href="{% url 'show_recipe' recipe.id %}">{{ recipe.title }}</a>
+            </h3>
+        </div>
+            <img class="list-img" src="{{ recipe.picture | default:'https://i.etsystatic.com/39994375/r/il/2df768/4612495587/il_1588xN.4612495587_nzob.jpg' }}" />
+            <div>{{ recipe.rating }} stars</div>
+        </div>
+        {% endfor %}
+    </div>
+{% endblock content %}
