@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.urls import reverse
 
 # rating validation:
 def validate_integer(value):
@@ -29,3 +30,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_api_url(self):
+        return reverse('api_show_recipe', kwargs={'id': self.id})

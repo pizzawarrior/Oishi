@@ -3,7 +3,8 @@ from recipes.models import Recipe
 from recipes.forms import RecipeForm
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-
+from django.http import JsonResponse
+import json
 
 
 # create recipe
@@ -22,7 +23,6 @@ def create_recipe(request):
     context = {
         'form': form,
     }
-
     return render(request, 'recipes/create.html', context)
 
 
@@ -36,22 +36,50 @@ def my_recipe_list(request):
     return render(request, 'recipes/list.html', context)
 
 
+# #list recipes
+# def recipe_list(request):
+#     recipe = Recipe.objects.all()
+#     context = {
+#         'recipe_list': recipe,
+#     }
+#     return render(request, 'recipes/list.html', context)
+
+
 #list recipes
-def recipe_list(request):
-    recipe = Recipe.objects.all()
-    context = {
-        'recipe_list': recipe,
-    }
-    return render(request, 'recipes/list.html', context)
+def api_recipe_list(request):
+    response = []
+    recipes = Recipe.objects.all()
+    for recipe in recipes:
+        response.append(
+            {
+                'title': recipe.title,
+                'href': recipe.get_api_url()
+            }
+        )
+    return JsonResponse({'recipes': response})
 
 
-#detail
-def show_recipe(request, id):
-    recipe = get_object_or_404(Recipe, id=id)
-    context = {
-        'recipe_object': recipe,
-    }
-    return render(request, 'recipes/detail.html', context)
+# #show recipe detail
+# def show_recipe(request, id):
+#     recipe = get_object_or_404(Recipe, id=id)
+#     context = {
+#         'recipe_object': recipe,
+#     }
+#     return render(request, 'recipes/detail.html', context)
+
+
+
+def api_show_recipe(request, id):
+    recipe = Recipe.objects.ger(id=id)
+    return JsonResponse(
+        {
+            'title': recipe.title,
+            'picture': recipe.picture,
+            'description': recipe.description,
+            'rating': recipe.rating
+        }
+    )
+
 
 
 #edit/ update recipe
