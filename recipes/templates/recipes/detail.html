@@ -12,6 +12,9 @@
     <p>{{ recipe_object.description }}</p>
     <div>{{ recipe_object.rating }} stars</div>
     <h2 class="detail">Ingredients</h2>
+      <p>
+        <a href="{% url 'add_ingredients' %}">Add Ingredients</a>
+      </p>
     <table class="ingredients-table">
       <thead>
         <tr>
@@ -22,16 +25,19 @@
       <tbody>
         {% for ingredient in recipe_object.ingredients.all %}
         <tr>
-          <td>{{ ingredient.amount }}</td>
-          <td>{{ ingredient.food_item }}</td>
+          <td><a href="{% url 'edit_ingredients' ingredient.id%}">{{ ingredient.amount }}</a></td>
+          <td><a href="{% url 'edit_ingredients' ingredient.id%}">{{ ingredient.food_item }}</a></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
     <h2 class="detail">Steps</h2>
       <div class="instructions">
+        <p>
+          <a href="{% url 'create_steps' %}">Add Recipe Steps</a>
+        </p>
           {% for step in recipe_object.steps.all %}
-          <li>{{ step.instruction }}</li>
+          <li><a href="{% url 'edit_steps' step.id%}">{{ step.instruction }}</a></li>
           {% endfor %}
       </div>
     <br>
@@ -51,3 +57,9 @@
     </div>
   </section>
 {% endblock content %}
+
+
+
+  <!-- <a href="{% url 'edit_ingredients' ingredients.id%}">Edit Ingredients</a>
+
+  <a href="{% url 'edit_steps' %}">Edit Recipe Steps</a> -->

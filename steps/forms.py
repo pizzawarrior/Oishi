@@ -6,5 +6,6 @@ class RecipeStepForm(ModelForm):
         model = RecipeStep
         fields = (
             'instruction',
-            'order'
+            'order',
+            'recipe',
         )

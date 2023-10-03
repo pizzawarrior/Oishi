@@ -7,5 +7,6 @@ class IngredientsForm(ModelForm):
         model = Ingredients
         fields = (
             'food_item',
-            'amount'
+            'amount',
+            'recipe',
         )
