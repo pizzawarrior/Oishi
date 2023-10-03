@@ -3,12 +3,12 @@
 
 {% block title %}
   <!-- <title>{{ recipe_object.title }}</title> -->
-  <title>Create a Recipe</title>
+  <title>Add Ingredients</title>
 {% endblock title %}
 
 {% block content %}
 <div class="create-form">
-  <h1>Add a new recipe!</h1>
+  <h1>Add Ingredients to your recipe!</h1>
     <form method="post">
         {% csrf_token %}
         {{form.as_p}}
