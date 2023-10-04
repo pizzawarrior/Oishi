@@ -4,6 +4,7 @@ from .models import Ingredients
 from recipes.models import Recipe
 from django.http import JsonResponse
 import json
+from common.json import ModelEncoder
 
 
 # @login_required(login_url="/accounts/login/")
@@ -46,11 +47,18 @@ import json
 #     return render(request, 'ingredients/detail.html', context)
 
 
+class IngredientsDetailEncoder(ModelEncoder):
+    model = Ingredients
+    properties = [
+        'food_item',
+        'amount'
+    ]
+
+
 def api_show_ingredients(request, id):
     ingredient = Ingredients.objects.get(id=id)
     return JsonResponse(
-        {
-            'food_item': ingredient.food_item,
-            'amount': ingredient.amount,
-        }
+        ingredient,
+        encoder=IngredientsDetailEncoder,
+        safe=False,
     )

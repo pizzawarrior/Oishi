@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import RecipeStep
 from django.http import JsonResponse
 import json
+from common.json import ModelEncoder
 
 
 # @login_required(login_url="/accounts/login/")

@@ -4,6 +4,10 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
+from common.json import ModelEncoder
+from django.views.decorators.http import require_http_methods
+
+
 
 
 # # create recipe
@@ -37,6 +41,17 @@ import json
 #     return JsonResponse({'recipes': recipes})
 
 
+class RecipeDetailEncoder(ModelEncoder):
+    model = Recipe
+    properties = [
+        'title',
+        'picture',
+        'description',
+        'rating',
+        'created_on'
+    ]
+
+
 # # USER SPECIFIC FILTERED RECIPE LIST
 def api_my_recipe_list(request):
     response = []
@@ -68,13 +83,23 @@ def api_recipe_list(request):
 def api_show_recipe(request, id):
     recipe = Recipe.objects.get(id=id)
     return JsonResponse(
-        {
-            'title': recipe.title,
-            'picture': recipe.picture,
-            'description': recipe.description,
-            'rating': recipe.rating
-        }
+        recipe,
+        encoder=RecipeDetailEncoder,
+        safe=False
     )
+
+
+# # show recipe detail OLD, BEFORE MAKING A MODEL ENCODER::::
+# def api_show_recipe(request, id):
+#     recipe = Recipe.objects.get(id=id)
+#     return JsonResponse(
+#         {
+#             'title': recipe.title,
+#             'picture': recipe.picture,
+#             'description': recipe.description,
+#             'rating': recipe.rating
+#         }
+#     )
 
 
 # #edit/ update recipe
