@@ -9,7 +9,6 @@ from django.views.decorators.http import require_http_methods
 
 
 
-
 # # create recipe
 # @login_required(login_url='/accounts/login/')
 # def create_recipe(request):
@@ -51,32 +50,59 @@ class RecipeDetailEncoder(ModelEncoder):
         'created_on'
     ]
 
+class RecipeListEncoder(ModelEncoder):
+    model = Recipe
+    properties = [
+        'title',
+    ]
 
-# # USER SPECIFIC FILTERED RECIPE LIST
+# my recipe list:
 def api_my_recipe_list(request):
-    response = []
     recipes = Recipe.objects.filter(author=request.user.id)
-    for recipe in recipes:
-        response.append(
-            {
-                'title': recipe.title,
-            }
+    return JsonResponse(
+        {'recipes': recipes},
+        encoder=RecipeListEncoder,
+        safe=False
         )
-    return JsonResponse({'recipes': response})
+
+
+# OLD: this is from before using the model encoders
+# # USER SPECIFIC FILTERED RECIPE LIST
+# def api_my_recipe_list(request):
+#     response = []
+#     recipes = Recipe.objects.filter(author=request.user.id)
+#     for recipe in recipes:
+#         response.append(
+#             {
+#                 'title': recipe.title,
+#             }
+#         )
+#     return JsonResponse({'recipes': response})
 
 
 #list ALL recipes
 def api_recipe_list(request):
-    response = []
     recipes = Recipe.objects.all()
-    for recipe in recipes:
-        response.append(
-            {
-                'title': recipe.title,
-                # 'href': recipe.get_api_url()
-            }
+    return JsonResponse(
+        {'recipes': recipes},
+        encoder=RecipeListEncoder,
+        safe=False
         )
-    return JsonResponse({'recipes': response})
+
+
+# OLD: Before encoders
+# #list ALL recipes
+# def api_recipe_list(request):
+#     response = []
+#     recipes = Recipe.objects.all()
+#     for recipe in recipes:
+#         response.append(
+#             {
+#                 'title': recipe.title,
+#                 # 'href': recipe.get_api_url()
+#             }
+#         )
+#     return JsonResponse({'recipes': response})
 
 
 # show recipe detail
@@ -89,7 +115,7 @@ def api_show_recipe(request, id):
     )
 
 
-# # show recipe detail OLD, BEFORE MAKING A MODEL ENCODER::::
+# # OLD, show recipe detail -- BEFORE MAKING A MODEL ENCODER::::
 # def api_show_recipe(request, id):
 #     recipe = Recipe.objects.get(id=id)
 #     return JsonResponse(
@@ -101,7 +127,7 @@ def api_show_recipe(request, id):
 #         }
 #     )
 
-
+# OLD Remainders of CRUD from when we were using templates
 # #edit/ update recipe
 # def edit_recipe(request, id):
 #     recipe = get_object_or_404(Recipe, id=id)

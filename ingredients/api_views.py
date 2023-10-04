@@ -51,7 +51,7 @@ class IngredientsDetailEncoder(ModelEncoder):
     model = Ingredients
     properties = [
         'food_item',
-        'amount'
+
     ]
 
 
@@ -62,3 +62,14 @@ def api_show_ingredients(request, id):
         encoder=IngredientsDetailEncoder,
         safe=False,
     )
+
+
+# OLD: before using the encoder::::
+# def api_show_ingredients(request, id):
+#     ingredient = Ingredients.objects.get(id=id)
+#     return JsonResponse(
+#         {
+#             'food_item': ingredient.food_item,
+#             'amount': ingredient.amount,
+#         }
+#     )

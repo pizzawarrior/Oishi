@@ -1,6 +1,16 @@
 from json import JSONEncoder
 from datetime import datetime
 from typing import Any
+from django.db.models import QuerySet
+
+
+# this is for handling errors when we create list views in our views files and a QuerySet object is returned
+class QuerySetEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, QuerySet):
+            return list(o)
+        else:
+            return super().default(o)
 
 
 # JSON does not like dates! So we do this:
@@ -12,7 +22,7 @@ class DateEncoder(JSONEncoder):
             return super().default(o)
 
 
-class ModelEncoder(DateEncoder, JSONEncoder):
+class ModelEncoder(DateEncoder, QuerySetEncoder, JSONEncoder):
     def default(self, o):
         #   if the object to decode is the same class as what's in the
         #   model property, then
