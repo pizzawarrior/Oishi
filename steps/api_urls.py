@@ -1,8 +1,8 @@
 from django.urls import path
-from steps.api_views import create_steps, edit_steps, show_steps
+from steps.api_views import api_show_steps, api_step_list
 
 urlpatterns = [
-    path('steps/create/', create_steps, name='create_steps'),
-    path('steps/edit/<int:id>/', edit_steps, name='edit_steps'),
-    path('steps/detail/', show_steps, name='show_steps'),
+    # do we want a list steps????
+    path('steps/', api_step_list, name='api_show_steps'),
+    path('step/detail/<int:id>', api_show_steps, name='api_show_steps'),
 ]

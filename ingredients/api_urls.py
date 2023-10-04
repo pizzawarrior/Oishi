@@ -1,8 +1,8 @@
 from django.urls import path
-from .api_views import add_ingredients, edit_ingredients, show_ingredients
+from .api_views import api_show_ingredients
+
 
 urlpatterns = [
-    path('ingredients/create/', add_ingredients, name='add_ingredients'),
-    path('ingredients/edit/<int:id>/', edit_ingredients, name='edit_ingredients'),
-    path('ingredients/detail/', show_ingredients, name='show_ingredients')
+    # do we want a ingredients/list/???
+    path('ingredients/detail/<int:id>/', api_show_ingredients, name='api_show_ingredients')
 ]
