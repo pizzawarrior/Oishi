@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Ingredients
-from recipes.models import Recipe
+from .models import Ingredients, RecipeVO
+# from recipes.models import Recipe
 from django.http import JsonResponse
 import json
 from common.json import ModelEncoder
@@ -48,30 +48,41 @@ from django.views.decorators.http import require_http_methods
 #     return render(request, 'ingredients/detail.html', context)
 
 
+class RecipeVODetailEncoder(ModelEncoder):
+    model = RecipeVO
+    properties = [
+        "title",
+        "import_ref",
+        ]
+
+
 class IngredientsDetailEncoder(ModelEncoder):
     model = Ingredients
     properties = [
         'food_item',
         'amount',
-
     ]
-# POST is not working due to not being able to sync the recipe id with the ingredient
-#  the result in Insomnia is a 'keyerror'
+
+
 @require_http_methods(['GET', 'POST'])
-def api_ingredients_list(request):
+def api_ingredients_list(request, recipe_vo_id=None):
     if request.method == 'GET':
-        ingredient = Ingredients.objects.all()
+        ingredients = Ingredients.objects.filter(recipe=recipe_vo_id)
         return JsonResponse(
-            {'ingredient': ingredient},
+            {'ingredients': ingredients},
             encoder=IngredientsDetailEncoder,
             safe=False,
         )
     else:
         content = json.loads(request.body)
         try:
-            recipe = Recipe.objects.get(id=content['recipe'])
+            recipe_href = f'/api/recipes/{recipe_vo_id}/'
+
+            recipe = RecipeVO.objects.get(import_hef=recipe_href)
+
             content['recipe'] = recipe
-        except Recipe.DoesNotExist:
+
+        except RecipeVO.DoesNotExist:
             return JsonResponse(
                 {'message': 'Invalid recipe id'},
                 status=400
@@ -82,6 +93,33 @@ def api_ingredients_list(request):
             encoder=IngredientsDetailEncoder,
             safe=False
         )
+
+
+# @require_http_methods(['GET', 'POST'])
+# def api_ingredients_list(request):
+#     if request.method == 'GET':
+#         ingredient = Ingredients.objects.all()
+#         return JsonResponse(
+#             {'ingredient': ingredient},
+#             encoder=IngredientsDetailEncoder,
+#             safe=False,
+#         )
+#     else:
+#         content = json.loads(request.body)
+#         try:
+#             recipe = RecipeVO.objects.get(id=content['recipe'])
+#             content['recipe'] = recipe
+#         except RecipeVO.DoesNotExist:
+#             return JsonResponse(
+#                 {'message': 'Invalid recipe id'},
+#                 status=400
+#             )
+#         ingredient = Ingredients.objects.create(**content)
+#         return JsonResponse(
+#             ingredient,
+#             encoder=IngredientsDetailEncoder,
+#             safe=False
+#         )
 
 
 # show ingredient detail, update, delete

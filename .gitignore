@@ -1,5 +1,5 @@
 # API key for pexels
-recipes/keys.py
+monolith/recipes/keys.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

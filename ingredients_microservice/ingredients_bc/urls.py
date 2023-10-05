@@ -1,5 +1,5 @@
 """
-URL configuration for scrumptious project.
+URL configuration for ingredients_bc project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -16,17 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.shortcuts import redirect
-
-def redirect_to_recipe_list(request):
-    return redirect('recipe_list')
 
 urlpatterns = [
-    path('', redirect_to_recipe_list, name='home_page'),
     path('admin/', admin.site.urls),
-    path('accounts/', include('accounts.urls')),
-    path('api/', include('recipes.api_urls')),
-    path('api/', include('steps.api_urls')),
-    path('api/', include('ingredients.api_urls')),
-
+    path("api/", include("ingredients.api_urls")),
 ]
