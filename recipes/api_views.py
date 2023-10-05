@@ -8,7 +8,6 @@ from common.json import ModelEncoder
 from django.views.decorators.http import require_http_methods
 
 
-
 # # create recipe
 # @login_required(login_url='/accounts/login/')
 # def create_recipe(request):
@@ -57,13 +56,24 @@ class RecipeListEncoder(ModelEncoder):
     ]
 
 # my recipe list:
+@require_http_methods(['GET', 'POST'])
 def api_my_recipe_list(request):
-    recipes = Recipe.objects.filter(author=request.user.id)
-    return JsonResponse(
-        {'recipes': recipes},
-        encoder=RecipeListEncoder,
-        safe=False
+    if request.method == 'GET':
+        recipe = Recipe.objects.filter(author=request.user.id)
+        return JsonResponse(
+            {'recipe': recipe},
+            encoder=RecipeListEncoder,
+            safe=False
+            )
+    else:
+        content = json.loads(request.body)
+        recipe = Recipe.objects.create(**content)
+        return JsonResponse(
+            recipe,
+            encoder=RecipeDetailEncoder,
+            safe=False,
         )
+
 
 
 # OLD: this is from before using the model encoders
@@ -81,12 +91,22 @@ def api_my_recipe_list(request):
 
 
 #list ALL recipes
+@require_http_methods(['GET', 'POST'])
 def api_recipe_list(request):
-    recipes = Recipe.objects.all()
-    return JsonResponse(
-        {'recipes': recipes},
-        encoder=RecipeListEncoder,
-        safe=False
+    if request.method == 'GET':
+        recipe = Recipe.objects.all()
+        return JsonResponse(
+            {'recipe': recipe},
+            encoder=RecipeListEncoder,
+            safe=False
+            )
+    else:
+        content = json.loads(request.body)
+        recipe = Recipe.objects.create(**content)
+        return JsonResponse(
+            recipe,
+            encoder=RecipeDetailEncoder,
+            safe=False,
         )
 
 
@@ -106,13 +126,27 @@ def api_recipe_list(request):
 
 
 # show recipe detail
+@require_http_methods(['GET', 'PUT', 'DELETE'])
 def api_show_recipe(request, id):
-    recipe = Recipe.objects.get(id=id)
-    return JsonResponse(
-        recipe,
-        encoder=RecipeDetailEncoder,
-        safe=False
-    )
+    if request.method == 'GET':
+        recipe = Recipe.objects.get(id=id)
+        return JsonResponse(
+            recipe,
+            encoder=RecipeDetailEncoder,
+            safe=False
+        )
+    elif request.method == 'DELETE':
+        count, _ = Recipe.objects.filter(id=id).delete()
+        return JsonResponse({'deleted': count > 0})
+    else:
+        content = json.loads(request.body)
+        Recipe.objects.filter(id=id).update(**content)
+        recipe = Recipe.objects.get(id=id)
+        return JsonResponse(
+            recipe,
+            encoder=RecipeDetailEncoder,
+            safe=False,
+        )
 
 
 # # OLD, show recipe detail -- BEFORE MAKING A MODEL ENCODER::::

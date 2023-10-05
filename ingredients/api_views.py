@@ -5,6 +5,7 @@ from recipes.models import Recipe
 from django.http import JsonResponse
 import json
 from common.json import ModelEncoder
+from django.views.decorators.http import require_http_methods
 
 
 # @login_required(login_url="/accounts/login/")
@@ -51,17 +52,61 @@ class IngredientsDetailEncoder(ModelEncoder):
     model = Ingredients
     properties = [
         'food_item',
+        'amount',
 
     ]
+# POST is not working due to not being able to sync the recipe id with the ingredient
+#  the result in Insomnia is a 'keyerror'
+@require_http_methods(['GET', 'POST'])
+def api_ingredients_list(request):
+    if request.method == 'GET':
+        ingredient = Ingredients.objects.all()
+        return JsonResponse(
+            {'ingredient': ingredient},
+            encoder=IngredientsDetailEncoder,
+            safe=False,
+        )
+    else:
+        content = json.loads(request.body)
+        try:
+            recipe = Recipe.objects.get(id=content['recipe'])
+            content['recipe'] = recipe
+        except Recipe.DoesNotExist:
+            return JsonResponse(
+                {'message': 'Invalid recipe id'},
+                status=400
+            )
+        ingredient = Ingredients.objects.create(**content)
+        return JsonResponse(
+            ingredient,
+            encoder=IngredientsDetailEncoder,
+            safe=False
+        )
 
 
+# show ingredient detail, update, delete
+@require_http_methods(['GET', 'PUT', 'DELETE'])
 def api_show_ingredients(request, id):
-    ingredient = Ingredients.objects.get(id=id)
-    return JsonResponse(
-        ingredient,
-        encoder=IngredientsDetailEncoder,
-        safe=False,
-    )
+    if request.method == 'GET':
+        ingredient = Ingredients.objects.get(id=id)
+        return JsonResponse(
+            ingredient,
+            encoder=IngredientsDetailEncoder,
+            safe=False
+        )
+    elif request.method == 'DELETE':
+        count, _ = Ingredients.objects.filter(id=id).delete()
+        return JsonResponse({'deleted': count > 0})
+    else:
+        content = json.loads(request.body)
+        Ingredients.objects.filter(id=id).update(**content)
+        ingredient = Ingredients.objects.get(id=id)
+        return JsonResponse(
+            ingredient,
+            encoder=IngredientsDetailEncoder,
+            safe=False,
+        )
+
 
 
 # OLD: before using the encoder::::

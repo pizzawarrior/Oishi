@@ -30,6 +30,11 @@ class ModelEncoder(DateEncoder, QuerySetEncoder, JSONEncoder):
         #     * create an empty dictionary that will hold the property names
         #       as keys and the property values as values
             result = {}
+            # if o has the attribute get_api_url
+            if hasattr(o, 'get_api_url'):
+            #    then add its return value to the dictionary
+            #    with the key "href"
+                result['href'] = o.get_api_url()
         #     * for each name in the properties list
             for prop in self.properties:
         #         * get the value of that property from the model instance
