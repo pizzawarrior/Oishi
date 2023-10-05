@@ -1,11 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
+# from django.shortcuts import render, get_object_or_404, redirect
+# from django.contrib.auth.decorators import login_required
 from recipes.models import Recipe
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+
 from django.http import JsonResponse
 import json
 from common.json import ModelEncoder
 from django.views.decorators.http import require_http_methods
+from .acls import get_image
 
 
 # # create recipe
@@ -67,6 +69,11 @@ def api_my_recipe_list(request):
             )
     else:
         content = json.loads(request.body)
+
+        # the property in get_image may need to be altered
+        picture = get_image(content['title'])
+        content.update(picture)
+
         recipe = Recipe.objects.create(**content)
         return JsonResponse(
             recipe,
@@ -102,6 +109,11 @@ def api_recipe_list(request):
             )
     else:
         content = json.loads(request.body)
+
+        # the property in get_image may need to be altered
+        picture = get_image(content['title'])
+        content.update(picture)
+
         recipe = Recipe.objects.create(**content)
         return JsonResponse(
             recipe,
